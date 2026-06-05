@@ -1,0 +1,12 @@
+common --enable_bzlmod
+
+build --cxxopt='-std=c++17'
+build --cxxopt='-Wall'
+build --cxxopt='-Wextra'
+
+test --test_output=errors
+test --flaky_test_attempts=2
+
+build:ci --noshow_progress
+build:ci --show_result=10
+test:ci  --test_output=all

@@ -1,0 +1,40 @@
+name: Lab CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  USE_BAZEL_VERSION: '9.1.0'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-lab-${{ hashFiles('MODULE.bazel', '**/*.bazel') }}
+          restore-keys: bazel-lab-
+
+      - name: Build
+        run: bazel build --config=ci //...
+
+      - name: Test
+        run: bazel test --config=ci //...
+
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: bazel-testlogs/
+          retention-days: 7
