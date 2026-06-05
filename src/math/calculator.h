@@ -25,5 +25,6 @@ public:
         return result;
     }
 };
+// test
 
 }  // namespace lab
